@@ -751,7 +751,9 @@ class _AnnotationPlane(_GDTObject):
 
     def execute(self, fp):
         '''"Print a short message when doing a recomputation, this method is mandatory" '''
-        fp.p1 = fp.faces[0].Shape.getElement(fp.faces[1][0]).CenterOfMass
+	FreeCAD.Console.PrintMessage('Tipo objeto que está ejecutando: '+ str(self.Type)+'\n')
+	FreeCAD.Console.PrintMessage('Tipo objeto pasado: '+ str(fp.Type)+'\n')        
+	fp.p1 = fp.faces[0].Shape.getElement(fp.faces[1][0]).CenterOfMass
         fp.Direction = fp.faces[0].Shape.getElement(fp.faces[1][0]).normalAt(0,0)
 
 class _ViewProviderAnnotationPlane(_ViewProviderGDT):
