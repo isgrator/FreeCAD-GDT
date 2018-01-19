@@ -43,6 +43,7 @@ class DatumFeatureCommand:
         ContainerOfData = makeContainerOfData()
         if getAnnotationObj(ContainerOfData):
             self.toolTip = 'Add Datum Feature to ' + getAnnotationObj(ContainerOfData).Label
+            FreeCAD.Console.PrintMessage('Add Datum Feature to\n')
             gdt.dialogWidgets[1] = None
         else:
             self.toolTip = 'Add Datum Feature'

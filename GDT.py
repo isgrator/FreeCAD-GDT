@@ -29,6 +29,7 @@ __url__ = "http://www.freecadweb.org"
 
 # Description of tool
 
+import time
 import numpy
 import FreeCAD as App
 import FreeCAD, math, sys, os, DraftVecUtils, Draft_rc
@@ -69,6 +70,7 @@ for i in range(1,100):
 #---------------------------------------------------------------------------
 
 def getParamType(param):
+    FreeCAD.Console.PrintMessage('1\n')
     if param in ["lineWidth"]:
         return "int"
     elif param in ["textFamily"]:
@@ -84,6 +86,7 @@ def getParamType(param):
 
 def getParam(param,default=None):
     "getParam(parameterName): returns a GDT parameter value from the current config"
+    FreeCAD.Console.PrintMessage('2\n')
     p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/GDT")
     t = getParamType(param)
     if t == "int":
@@ -111,6 +114,7 @@ def getParam(param,default=None):
 
 def setParam(param,value):
     "setParam(parameterName,value): sets a GDT parameter with the given value"
+    FreeCAD.Console.PrintMessage('3\n')
     p = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/GDT")
     t = getParamType(param)
     if t == "int": p.SetInt(param,value)
@@ -125,6 +129,7 @@ def setParam(param,value):
 
 def stringencodecoin(ustr):
     """stringencodecoin(str): Encodes a unicode object to be used as a string in coin"""
+    FreeCAD.Console.PrintMessage('4\n')
     try:
         from pivy import coin
         coin4 = coin.COIN_MAJOR_VERSION >= 4
@@ -136,10 +141,12 @@ def stringencodecoin(ustr):
         return ustr.encode('latin1')
 
 def stringplusminus():
+    FreeCAD.Console.PrintMessage('5\n')
     return ' ± ' if coin.COIN_MAJOR_VERSION >= 4 else ' +- '
 
 def getType(obj):
     "getType(object): returns the GDT type of the given object"
+    FreeCAD.Console.PrintMessage('6\n')
     if not obj:
         return None
     if "Proxy" in obj.PropertiesList:
@@ -149,11 +156,13 @@ def getType(obj):
 
 def getObjectsOfType(typeList):
     "getObjectsOfType(string): returns a list of objects of the given type"
+    FreeCAD.Console.PrintMessage('7\n')
     listObjectsOfType = []
     objs = FreeCAD.ActiveDocument.Objects
     if not isinstance(typeList,list):
         typeList = [typeList]
     for obj in objs:
+        FreeCAD.Console.PrintMessage('7 Objeto: '+str(obj.Label)+' de tipo '+getType(obj)+'\n')
         for typ in typeList:
             if typ == getType(obj):
                 listObjectsOfType.append(obj)
@@ -161,29 +170,36 @@ def getObjectsOfType(typeList):
 
 def getAllAnnotationPlaneObjects():
     "getAllAnnotationPlaneObjects(): returns a list of annotation plane objects"
+    FreeCAD.Console.PrintMessage('8\n')
     return getObjectsOfType("AnnotationPlane")
 
 def getAllDatumFeatureObjects():
     "getAllDatumFeatureObjects(): returns a list of datum feature objects"
+    FreeCAD.Console.PrintMessage('9\n')
     return getObjectsOfType("DatumFeature")
 
 def getAllDatumSystemObjects():
     "getAllDatumSystemObjects(): returns a list of datum system objects"
+    FreeCAD.Console.PrintMessage('10\n')
     return getObjectsOfType("DatumSystem")
 
 def getAllGeometricToleranceObjects():
     "getAllGeometricToleranceObjects(): returns a list of geometric tolerance objects"
+    FreeCAD.Console.PrintMessage('11\n')
     return getObjectsOfType("GeometricTolerance")
 
 def getAllGDTObjects():
     "getAllGDTObjects(): returns a list of GDT objects"
+    FreeCAD.Console.PrintMessage('12\n')
     return getObjectsOfType(["AnnotationPlane","DatumFeature","DatumSystem","GeometricTolerance"])
 
 def getAllAnnotationObjects():
     "getAllAnnotationObjects(): returns a list of annotation objects"
+    FreeCAD.Console.PrintMessage('13\n')
     return getObjectsOfType("Annotation")
 
 def getRGB(param):
+    FreeCAD.Console.PrintMessage('14\n')
     color = QtGui.QColor(getParam(param,16753920)>>8)
     r = float(color.red()/255.0)
     g = float(color.green()/255.0)
@@ -192,21 +208,27 @@ def getRGB(param):
     return col
 
 def getRGBText():
+    FreeCAD.Console.PrintMessage('15\n')
     return getRGB("textColor")
 
 def getTextFamily():
+    FreeCAD.Console.PrintMessage('16\n')
     return getParam("textFamily","")
 
 def getTextSize():
+    FreeCAD.Console.PrintMessage('17\n')
     return getParam("textSize",2.2)
 
 def getLineWidth():
+    FreeCAD.Console.PrintMessage('18\n')
     return getParam("lineWidth",2)
 
 def getRGBLine():
+    FreeCAD.Console.PrintMessage('19\n')
     return getRGB("lineColor")
 
 def hideGrid():
+    FreeCAD.Console.PrintMessage('20\n')
     if hasattr(FreeCADGui,"Snapper") and getParam("alwaysShowGrid") == False:
         if FreeCADGui.Snapper.grid:
             if FreeCADGui.Snapper.grid.Visible:
@@ -214,6 +236,7 @@ def hideGrid():
                 FreeCADGui.Snapper.forceGridOff=True
 
 def showGrid():
+    FreeCAD.Console.PrintMessage('21\n')
     if hasattr(FreeCADGui,"Snapper"):
         if FreeCADGui.Snapper.grid:
             if FreeCADGui.Snapper.grid.Visible == False:
@@ -225,18 +248,21 @@ def showGrid():
 
 def getSelection():
     "getSelection(): returns the current FreeCAD selection"
+    FreeCAD.Console.PrintMessage('22\n')
     if gui:
         return FreeCADGui.Selection.getSelection()
     return None
 
 def getSelectionEx():
     "getSelectionEx(): returns the current FreeCAD selection (with subobjects)"
+    FreeCAD.Console.PrintMessage('23\n')
     if gui:
         return FreeCADGui.Selection.getSelectionEx()
     return None
 
 def select(obj):
     "select(object): deselects everything and selects only the working faces of the passed object"
+    FreeCAD.Console.PrintMessage('24\n')
     if gui:
         FreeCADGui.Selection.clearSelection()
         for i in range(len(obj.faces)):
@@ -244,6 +270,7 @@ def select(obj):
 
 def makeContainerOfData():
     ""
+    FreeCAD.Console.PrintMessage('25\n')
     faces = []
     for i in range(len(getSelectionEx())):
         for j in range(len(getSelectionEx()[i].SubElementNames)):
@@ -253,13 +280,18 @@ def makeContainerOfData():
     return container
 
 def getAnnotationObj(obj):
+    FreeCAD.Console.PrintMessage('26\n')
     List = getAllAnnotationObjects()
+    FreeCAD.Console.PrintMessage('26 List: '+str(len(List))+'\n')
     for l in List:
+        FreeCAD.Console.PrintMessage('26 elemento: '+l.textName+'\n')
         if l.faces == obj.faces:
+            FreeCAD.Console.PrintMessage('26 Devuelve objeto: '+l.textName+'\n')
             return l
     return None
 
 def getAnnotationWithDF(obj):
+    FreeCAD.Console.PrintMessage('27\n')
     List = getAllAnnotationObjects()
     for l in List:
         if l.DF == obj:
@@ -267,6 +299,7 @@ def getAnnotationWithDF(obj):
     return None
 
 def getAnnotationWithGT(obj):
+    FreeCAD.Console.PrintMessage('28\n')
     List = getAllAnnotationObjects()
     for l in List:
         for gt in l.GT:
@@ -275,6 +308,7 @@ def getAnnotationWithGT(obj):
     return None
 
 def getPointsToPlot(obj):
+    FreeCAD.Console.PrintMessage('29\n')
     points = []
     segments = []
     if obj.GT <> [] or obj.DF <> None:
@@ -305,6 +339,7 @@ def getPointsToPlot(obj):
     return points, segments
 
 def getPointsToPlotGT(obj, points, segments, Vertical, Horizontal):
+    FreeCAD.Console.PrintMessage('30\n')
     newPoints = points
     newSegments = segments
     if obj.ViewObject.LineScale > 0:
@@ -366,6 +401,7 @@ def getPointsToPlotGT(obj, points, segments, Vertical, Horizontal):
     return newPoints, newSegments
 
 def getPointsToPlotDF(obj, existGT, points, segments, Vertical, Horizontal):
+    FreeCAD.Console.PrintMessage('31\n')
     d = len(points)
     newPoints = points
     newSegments = segments
@@ -400,7 +436,8 @@ def getPointsToPlotDF(obj, existGT, points, segments, Vertical, Horizontal):
     return newPoints, newSegments
 
 def plotStrings(self, fp, points):
-    FreeCAD.Console.PrintMessage('+plotStrings\n')
+    FreeCAD.Console.PrintMessage('32\n')
+    FreeCAD.Console.PrintMessage('+plotStrings fp.Label:'+fp.Label+' fp.GT: '+str(fp.GT)+'\n')
     import DraftGeomUtils
     if fp.ViewObject.LineScale > 0:
         sizeOfLine = fp.ViewObject.LineScale
@@ -416,6 +453,7 @@ def plotStrings(self, fp, points):
     displacement = 0
     if fp.GT <> []:
         for i in range(len(fp.GT)):
+            FreeCAD.Console.PrintMessage('32: fp.GT['+str(i)+']################\n')
             distance = 0
             # posToleranceValue
             v = (points[7+displacement] - points[5+displacement])
@@ -478,6 +516,7 @@ def plotStrings(self, fp, points):
                 indexIcon+=1
 
             self.textGT[index].string = self.textGT3d[index].string = stringencodecoin(displayExternal(fp.GT[i].ToleranceValue, fp.ViewObject.Decimals, 'Length', fp.ViewObject.ShowUnit))
+            FreeCAD.Console.PrintMessage(str(stringencodecoin(displayExternal(fp.GT[i].ToleranceValue, fp.ViewObject.Decimals, 'Length', fp.ViewObject.ShowUnit)))+'\n')
             self.textGTpos[index].translation.setValue([posToleranceValue.x, posToleranceValue.y, posToleranceValue.z])
             self.textGT[index].justification = coin.SoAsciiText.CENTER
             index+=1
@@ -543,8 +582,8 @@ def plotStrings(self, fp, points):
             except:
                 pass
         for i in range(index,len(self.textGT)):
-            if str(self.textGT[i].string) <> "":
-                self.textGT[i].string = self.textGT3d[i].string = ""
+            if str(self.textGT[i].string) <> " ":
+                self.textGT[i].string = self.textGT3d[i].string = " "
             else:
                 break
         for i in range(indexIcon,len(self.svg)):
@@ -552,9 +591,11 @@ def plotStrings(self, fp, points):
                 self.face[i].numVertices = 0
                 self.svg[i].filename = ""
     else:
-        for i in range(len(self.textGT)):
-            if str(self.textGT[i].string) <> "" or str(self.svg[i].filename) <> "":
-                self.textGT[i].string = self.textGT3d[i].string = ""
+        FreeCAD.Console.PrintMessage('len(self.textGT): '+str(len(self.textGT))+' len(self.svg): '+str(len(self.svg))+'\n')
+        for i in range(len(self.textGT)):        
+            FreeCAD.Console.PrintMessage('self.textGT['+str(i)+']: '+str(self.textGT[i])+'\n')
+            if str(self.textGT[i].string) <> " " or str(self.svg[i].filename) <> "":           #Replaced "" with " "
+                self.textGT[i].string = self.textGT3d[i].string = " "
                 self.face[i].numVertices = 0
                 self.svg[i].filename = ""
             else:
@@ -611,6 +652,7 @@ def plotStrings(self, fp, points):
 def getDefaultUnit(dim):
     '''return default Unit of Measure for a Dimension based on user preference
     Units Schema'''
+    FreeCAD.Console.PrintMessage('33\n')
     # only Length and Angle so far
     from FreeCAD import Units
     if dim == 'Length':
@@ -626,6 +668,7 @@ def getDefaultUnit(dim):
 def makeFormatSpec(decimals=4,dim='Length'):
     ''' return a % format spec with specified decimals for a specified
     dimension based on on user preference Units Schema'''
+    FreeCAD.Console.PrintMessage('34\n')
     if dim == 'Length':
         fmtSpec = "%." + str(decimals) + "f "+ getDefaultUnit('Length')
     elif dim == 'Angle':
@@ -637,6 +680,7 @@ def makeFormatSpec(decimals=4,dim='Length'):
 def displayExternal(internValue,decimals=4,dim='Length',showUnit=True):
     '''return an internal value (ie mm) Length or Angle converted for display according
     to Units Schema in use.'''
+    FreeCAD.Console.PrintMessage('35\n')
     from FreeCAD import Units
 
     if dim == 'Length':
@@ -669,70 +713,87 @@ def displayExternal(internValue,decimals=4,dim='Length',showUnit=True):
 
 class _GDTObject:
     "The base class for GDT objects"
+    FreeCAD.Console.PrintMessage('36\n')
     def __init__(self,obj,tp="Unknown"):
         '''Add some custom properties to our GDT feature'''
+        FreeCAD.Console.PrintMessage('36A\n')
         obj.Proxy = self
         self.Type = tp
+        FreeCAD.Console.PrintMessage('Inicia un GDTObject con tipo:'+str(tp)+'\n')
 
     def __getstate__(self):
+        FreeCAD.Console.PrintMessage('36B\n')
         return self.Type
 
     def __setstate__(self,state):
+        FreeCAD.Console.PrintMessage('36C\n')
         if state:
             self.Type = state
 
     def execute(self,obj):
         '''Do something when doing a recomputation, this method is mandatory'''
+        FreeCAD.Console.PrintMessage('36D\n')
         pass
 
     def onChanged(self, vobj, prop):
         '''Do something when a property has changed'''
+        FreeCAD.Console.PrintMessage('36E\n')
         pass
 
 class _ViewProviderGDT:
     "The base class for GDT Viewproviders"
-
+    FreeCAD.Console.PrintMessage('37\n')
     def __init__(self, vobj):
         '''Set this object to the proxy object of the actual view provider'''
+        FreeCAD.Console.PrintMessage('37A\n')
         vobj.Proxy = self
         self.Object = vobj.Object
 
     def __getstate__(self):
+        FreeCAD.Console.PrintMessage('37B\n')
         return None
 
     def __setstate__(self, state):
+        FreeCAD.Console.PrintMessage('37C\n')
         return None
 
     def attach(self,vobj):
         '''Setup the scene sub-graph of the view provider, this method is mandatory'''
+        FreeCAD.Console.PrintMessage('37D\n')
         self.Object = vobj.Object
         return
 
     def updateData(self, obj, prop):
         '''If a property of the handled feature has changed we have the chance to handle this here'''
+        FreeCAD.Console.PrintMessage('37E\n')
         # fp is the handled feature, prop is the name of the property that has changed
         return
 
     def getDisplayModes(self, vobj):
         '''Return a list of display modes.'''
+        FreeCAD.Console.PrintMessage('37F\n')
         modes=[]
         return modes
 
     def setDisplayMode(self, mode):
         '''Map the display mode defined in attach with those defined in getDisplayModes.\
                 Since they have the same names nothing needs to be done. This method is optional'''
+        FreeCAD.Console.PrintMessage('37G\n')
         return mode
 
     def onChanged(self, vobj, prop):
         '''Here we can do something when a single property got changed'''
+        FreeCAD.Console.PrintMessage('37H\n')
         return
 
     def execute(self,vobj):
+        FreeCAD.Console.PrintMessage('37I\n')
         return
 
     def getIcon(self):
         '''Return the icon in XPM format which will appear in the tree view. This method is\
                 optional and if not defined a default icon is shown.'''
+        FreeCAD.Console.PrintMessage('37J\n')
         return(":/dd/icons/GDT.svg")
 
     #-----------------------------------------------------------------------
@@ -741,9 +802,12 @@ class _ViewProviderGDT:
 
 class _AnnotationPlane(_GDTObject):
     "The GDT AnnotationPlane object"
+    FreeCAD.Console.PrintMessage('38\n')
     def __init__(self, obj):
 		try:
+                        FreeCAD.Console.PrintMessage('38A\n')
 			_GDTObject.__init__(self,obj,"AnnotationPlane")
+                        FreeCAD.Console.PrintMessage('Version coin3D: '+str(coin.COIN_MAJOR_VERSION)+'\n')
 			FreeCAD.Console.PrintMessage('Tipo objeto pasado: '+ str(obj.Type)+'\n')        
 			FreeCAD.Console.PrintMessage('Objeto: '+ str(id(obj)) +'\n')        
 			obj.addProperty("App::PropertyFloat","Offset","GDT","The offset value to aply in this annotation plane")
@@ -772,30 +836,36 @@ class _AnnotationPlane(_GDTObject):
 			
 
     def onChanged(self,vobj,prop):
+        FreeCAD.Console.PrintMessage('38B\n')
         if hasattr(vobj,"PointWithOffset"):
             vobj.setEditorMode('PointWithOffset',1)
 
     def execute(self, fp):
 	'''"Print a short message when doing a recomputation, this method is mandatory" '''
+        FreeCAD.Console.PrintMessage('38C\n')
 	FreeCAD.Console.PrintMessage('Tipo objeto que está ejecutando: '+ str(self.Type)+'\n')
 	FreeCAD.Console.PrintMessage('Tipo objeto pasado: '+ str(fp.Type)+'\n')        
 	FreeCAD.Console.PrintMessage('Objeto: '+ str(id(fp))+'\n')        
-	fp.p1 = fp.faces[0].Shape.getElement(fp.faces[1][0]).CenterOfMass
+	fp.p1 = fp.faces[0].Shape.getElement(fp.faces[1][0]).CenterOfMass 
 	fp.Direction = fp.faces[0].Shape.getElement(fp.faces[1][0]).normalAt(0,0)
-	FreeCAD.Console.PrintMessage('Salimos\n')        
+        FreeCAD.Console.PrintMessage('Salimos\n')        
 
 class _ViewProviderAnnotationPlane(_ViewProviderGDT):
     "A View Provider for the GDT AnnotationPlane object"
+    FreeCAD.Console.PrintMessage('39\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('39A\n')
         _ViewProviderGDT.__init__(self,obj)
 
     def updateData(self, obj, prop):
         "called when the base object is changed"
+        FreeCAD.Console.PrintMessage('39B\n')
         FreeCAD.Console.PrintMessage('entra en update de ViewProviderAnnotationPlane\n')
         if prop in ["Point","Direction","Offset"]:
             obj.PointWithOffset = obj.p1 + obj.Direction * obj.Offset
 
     def doubleClicked(self,obj):
+        FreeCAD.Console.PrintMessage('39C\n')
         showGrid()
         if hasattr(FreeCADGui,"Snapper"):
             if FreeCADGui.Snapper.grid:
@@ -804,11 +874,13 @@ class _ViewProviderAnnotationPlane(_ViewProviderGDT):
                 FreeCAD.ActiveDocument.recompute()
 
     def getIcon(self):
+        FreeCAD.Console.PrintMessage('39D\n')
         return(":/dd/icons/annotationPlane.svg")
 
 def makeAnnotationPlane(Name, Offset):
     ''' Explanation
     '''
+    FreeCAD.Console.PrintMessage('40\n')
     if len(getAllAnnotationPlaneObjects()) == 0:
         group = FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroupPython", "GDT")
         _GDTObject(group)
@@ -835,41 +907,79 @@ def makeAnnotationPlane(Name, Offset):
 
 class _DatumFeature(_GDTObject):
     "The GDT DatumFeature object"
+    FreeCAD.Console.PrintMessage('41\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('41A\n')
         _GDTObject.__init__(self,obj,"DatumFeature")
 
     def execute(self,obj):
         '''Do something when doing a recomputation, this method is mandatory'''
+        FreeCAD.Console.PrintMessage('41B\n')
         pass
 
 class _ViewProviderDatumFeature(_ViewProviderGDT):
     "A View Provider for the GDT DatumFeature object"
+    FreeCAD.Console.PrintMessage('42\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('42A\n')
         _ViewProviderGDT.__init__(self,obj)
 
     def getIcon(self):
+        FreeCAD.Console.PrintMessage('42B\n')
         return(":/dd/icons/datumFeature.svg")
 
 def makeDatumFeature(Name, ContainerOfData):
     ''' Explanation
     '''
+    FreeCAD.Console.PrintMessage('43\n')
     FreeCAD.Console.PrintMessage('Comienzo método makeDatumFeature\n')
     obj = FreeCAD.ActiveDocument.addObject("App::FeaturePython","DatumFeature")
     _DatumFeature(obj)
     if gui:
         FreeCAD.Console.PrintMessage('makeDatumFeature entra en if1\n')
+        #time.sleep(1) #***********************CON ESTO SÍ AÑADE UN DATUM FEATURE pero se queda parado en 42B
         _ViewProviderDatumFeature(obj.ViewObject)
         FreeCAD.Console.PrintMessage('makeDatumFeature fin if1\n')
     FreeCAD.Console.PrintMessage('Bloque después de if1\n')
     obj.Label = Name
+    FreeCAD.Console.PrintMessage('label:'+obj.Label+'\n')
     group = FreeCAD.ActiveDocument.getObject("GDT")
     group.addObject(obj)
+    FreeCAD.Console.PrintMessage('===== CONTENIDO DEL CONTAINER OF DATA PASADO A makeDatumFeature ==========\n')
+    FreeCAD.Console.PrintMessage('faces: '+str(ContainerOfData.faces[0])+'\n')
+    #FreeCAD.Console.PrintMessage('diameter'+ContainerOfData.diameter+'\n')
+    #FreeCAD.Console.PrintMessage('Direction'+ContainerOfData.Direction+'\n')
+    #FreeCAD.Console.PrintMessage('DirectionAxis'+ContainerOfData.DirectionAxis+'\n')
+    #FreeCAD.Console.PrintMessage('p1'+ContainerOfData.p1+'\n')
+    #FreeCAD.Console.PrintMessage('diameter'+ContainerOfData.diameter+'\n')
+    #FreeCAD.Console.PrintMessage('circumference'+ContainerOfData.circumference+'\n')
+    #FreeCAD.Console.PrintMessage('toleranceSelect'+ContainerOfData.toleranceSelect+'\n')
+    #FreeCAD.Console.PrintMessage('toleranceDiameter'+ContainerOfData.toleranceDiameter+'\n')
+    #FreeCAD.Console.PrintMessage('lowLimit'+ContainerOfData.lowLimit+'\n')
+    #FreeCAD.Console.PrintMessage('highLimit'+ContainerOfData.highLimit+'\n')
+    #FreeCAD.Console.PrintMessage('OffsetValue'+ContainerOfData.OffsetValue+'\n')
+    FreeCAD.Console.PrintMessage('textName '+ContainerOfData.textName+'\n')
+    #FreeCAD.Console.PrintMessage('textDS'+ContainerOfData.textDS+'\n')
+    #FreeCAD.Console.PrintMessage('primary'+ContainerOfData.primary+'\n')
+    #FreeCAD.Console.PrintMessage('secondary'+ContainerOfData.secondary+'\n')
+    #FreeCAD.Console.PrintMessage('tertiary'+ContainerOfData.tertiary+'\n')
+    #FreeCAD.Console.PrintMessage('characteristic'+ContainerOfData.characteristic+'\n')
+    #FreeCAD.Console.PrintMessage('toleranceValue'+ContainerOfData.toleranceValue+'\n')
+    #FreeCAD.Console.PrintMessage('featureControlFrame'+ContainerOfData.featureControlFrame+'\n')
+    #FreeCAD.Console.PrintMessage('datumSystem'+ContainerOfData.datumSystem+'\n')
+    #FreeCAD.Console.PrintMessage('annotationPlane'+ContainerOfData.annotationPlane+'\n')
+    #FreeCAD.Console.PrintMessage('annotation'+ContainerOfData.annotation+'\n')
+    #FreeCAD.Console.PrintMessage('combo'+ContainerOfData.combo+'\n')
+    #FreeCAD.Console.PrintMessage('Proxy'+ContainerOfData.Proxy+'\n')
+    FreeCAD.Console.PrintMessage('=========================================================================\n')
     AnnotationObj = getAnnotationObj(ContainerOfData)
     FreeCAD.Console.PrintMessage('Fin bloque después de if1\n')
+    FreeCAD.Console.PrintMessage('AnnotationObj:'+str(AnnotationObj)+'\n')
     if AnnotationObj == None:
         FreeCAD.Console.PrintMessage('makeDatumFeature entra en if2\n')
+        FreeCAD.Console.PrintMessage('faces:'+str(len(ContainerOfData.faces))+' AP:'+str(ContainerOfData.annotationPlane.PropertiesList)+' DF:  con label:'+obj.Label+' tipo '+str(obj.Type)+' '+str(obj.PropertiesList)+'\n')
         makeAnnotation(ContainerOfData.faces, ContainerOfData.annotationPlane, DF=obj, GT=[])
-        FreeCAD.Console.PrintMessage('makeDatumFeature fin if2\n')
+        FreeCAD.Console.PrintMessage('makeDatumFeature fin if2: Annotation creada(porque no habían aún\n')
     else:
         FreeCAD.Console.PrintMessage('makeDatumFeature entra en else de if2\n')
         faces = AnnotationObj.faces
@@ -883,7 +993,11 @@ def makeDatumFeature(Name, ContainerOfData):
         group = makeAnnotation(faces, AP, DF=obj, GT=GT, modify = True, Object = AnnotationObj, diameter=diameter, toleranceSelect=toleranceSelect, toleranceDiameter=toleranceDiameter, lowLimit=lowLimit, highLimit=highLimit)
         group.addObject(obj)
         FreeCAD.Console.PrintMessage('makeDatumFeature fin else de if2\n')
+    #FreeCAD.Console.PrintMessage('Lista de Annotation Objects disponibles:'+str(getAllAnnotationObjects()[0].faces)+'\n')
+    #FreeCAD.Console.PrintMessage('*******************************************Número de Annotation Objects disponibles:'+str(len(getAllAnnotationObjects()))+'\n')
+    #getAllAnnotationObjects()[0].touch()
     for l in getAllAnnotationObjects():
+        FreeCAD.COnsole.PrintMessage('Ha encontrado un AnnotationObject:###########################################################\n')
         l.touch()
         FreeCAD.Console.PrintMessage('makeDatumFeature entra en bucle for\n')
     FreeCAD.Console.PrintMessage('makeDatumFeature Bloque tras despues de for\n')
@@ -897,7 +1011,9 @@ def makeDatumFeature(Name, ContainerOfData):
 
 class _DatumSystem(_GDTObject):
     "The GDT DatumSystem object"
+    FreeCAD.Console.PrintMessage('44\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('44A\n')
         _GDTObject.__init__(self,obj,"DatumSystem")
         obj.addProperty("App::PropertyLink","Primary","GDT","Primary datum feature used")
         obj.addProperty("App::PropertyLink","Secondary","GDT","Secondary datum feature used")
@@ -905,13 +1021,17 @@ class _DatumSystem(_GDTObject):
 
 class _ViewProviderDatumSystem(_ViewProviderGDT):
     "A View Provider for the GDT DatumSystem object"
+    FreeCAD.Console.PrintMessage('44B\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('44BB\n')
         _ViewProviderGDT.__init__(self,obj)
 
     def updateData(self, obj, prop):
         "called when the base object is changed"
+        FreeCAD.Console.PrintMessage('44C\n')
         FreeCAD.Console.PrintMessage('ENtra en updateData de _ViewProviderDatumSystem\n')
         FreeCAD.Console.PrintMessage('+updateData ' +str(obj.Label)+'\n')
+        FreeCAD.Console.PrintMessage('prop ***linea 989****' +str(prop)+'\n')
         if prop in ["Primary","Secondary","Tertiary"]:
             textName = obj.Label.split(":")[0]
             if obj.Primary <> None:
@@ -925,11 +1045,13 @@ class _ViewProviderDatumSystem(_ViewProviderGDT):
         
 
     def getIcon(self):
+        FreeCAD.Console.PrintMessage('44D\n')
         return(":/dd/icons/datumSystem.svg")
 
 def makeDatumSystem(Name, Primary, Secondary=None, Tertiary=None):
     ''' Explanation
     '''
+    FreeCAD.Console.PrintMessage('45\n')
     FreeCAD.Console.PrintMessage('Ejecuta makeDatumSystem ' + Name+'\n')
     obj = FreeCAD.ActiveDocument.addObject("App::FeaturePython","DatumSystem")
     _DatumSystem(obj)
@@ -944,7 +1066,6 @@ def makeDatumSystem(Name, Primary, Secondary=None, Tertiary=None):
     for l in getAllAnnotationObjects():
         l.touch()
     FreeCAD.ActiveDocument.recompute()
-    FreeCAD.Console.PrintMessage('Termina ejecucion makeDatumSystem')
     return obj
 
     #-----------------------------------------------------------------------
@@ -953,7 +1074,9 @@ def makeDatumSystem(Name, Primary, Secondary=None, Tertiary=None):
 
 class _GeometricTolerance(_GDTObject):
     "The GDT GeometricTolerance object"
+    FreeCAD.Console.PrintMessage('46\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('46A\n')
         _GDTObject.__init__(self,obj,"GeometricTolerance")
         obj.addProperty("App::PropertyString","Characteristic","GDT","Characteristic of the geometric tolerance")
         obj.addProperty("App::PropertyString","CharacteristicIcon","GDT","Characteristic icon path of the geometric tolerance")
@@ -964,6 +1087,7 @@ class _GeometricTolerance(_GDTObject):
         obj.addProperty("App::PropertyLink","DS","GDT","Datum system used")
 
     def onChanged(self,vobj,prop):
+        FreeCAD.Console.PrintMessage('46B\n')
         "Do something when a property has changed"
         if hasattr(vobj,"CharacteristicIcon"):
             vobj.setEditorMode('CharacteristicIcon',2)
@@ -972,16 +1096,20 @@ class _GeometricTolerance(_GDTObject):
 
 class _ViewProviderGeometricTolerance(_ViewProviderGDT):
     "A View Provider for the GDT GeometricTolerance object"
+    FreeCAD.Console.PrintMessage('47\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('47A\n')
         _ViewProviderGDT.__init__(self,obj)
 
     def getIcon(self):
+        FreeCAD.Console.PrintMessage('47B\n')
         icon = self.Object.CharacteristicIcon
         return icon
 
 def makeGeometricTolerance(Name, ContainerOfData):
     ''' Explanation
     '''
+    FreeCAD.Console.PrintMessage('48\n')
     obj = FreeCAD.ActiveDocument.addObject("App::FeaturePython","GeometricTolerance")
     _GeometricTolerance(obj)
     if gui:
@@ -1030,24 +1158,45 @@ def makeGeometricTolerance(Name, ContainerOfData):
 
 class _Annotation(_GDTObject):
     "The GDT Annotation object"
+    FreeCAD.Console.PrintMessage('49\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('49A\n')
         _GDTObject.__init__(self,obj,"Annotation")
         obj.addProperty("App::PropertyLinkSubList","faces","GDT","Linked faces of the object")
+        FreeCAD.Console.PrintMessage('I1\n')
         obj.addProperty("App::PropertyLink","AP","GDT","Annotation plane used")
-        obj.addProperty("App::PropertyLink","DF","GDT","Text").DF=None
-        obj.addProperty("App::PropertyLinkList","GT","GDT","Text").GT=[]
-        obj.addProperty("App::PropertyVector","p1","GDT","Start point")
+        FreeCAD.Console.PrintMessage('I4\n')
+	obj.addProperty("App::PropertyVector","p1","GDT","Start point")
+        FreeCAD.Console.PrintMessage('I3\n')
+        obj.addProperty("App::PropertyLinkList","GT","GDT","Text").GT=[]      
+        FreeCAD.Console.PrintMessage('I5\n')
         obj.addProperty("App::PropertyVector","Direction","GDT","The normal direction of your annotation plane")
+        FreeCAD.Console.PrintMessage('I6\n')
         obj.addProperty("App::PropertyVector","selectedPoint","GDT","Selected point to where plot the annotation")
+        FreeCAD.Console.PrintMessage('I7\n')
         obj.addProperty("App::PropertyBool","spBool","GDT","Boolean to confirm that a selected point exists").spBool = False
+        FreeCAD.Console.PrintMessage('I8\n')
         obj.addProperty("App::PropertyBool","circumferenceBool","GDT","Boolean to determine if this annotation is over a circumference").circumferenceBool = False
+        FreeCAD.Console.PrintMessage('I9\n')
         obj.addProperty("App::PropertyFloat","diameter","GDT","Diameter")
+        FreeCAD.Console.PrintMessage('I10\n')
         obj.addProperty("App::PropertyBool","toleranceSelectBool","GDT","Determinates if use plus-minus or low and high limits").toleranceSelectBool = True
+        FreeCAD.Console.PrintMessage('I11\n')
         obj.addProperty("App::PropertyFloat","toleranceDiameter","GDT","Diameter tolerance (Plus-minus)")
+        FreeCAD.Console.PrintMessage('I12\n')
         obj.addProperty("App::PropertyFloat","lowLimit","GDT","Low limit diameter tolerance")
+        FreeCAD.Console.PrintMessage('I13\n')
         obj.addProperty("App::PropertyFloat","highLimit","GDT","High limit diameter tolerance")
+        FreeCAD.Console.PrintMessage('I2\n')
+        auxDF = FreeCAD.ActiveDocument.addObject("App::FeaturePython","DatumFeature")
+        #obj.addProperty("App::PropertyLink","DF","GDT","Text").DF=''  #Replaced 'None' with an empty string (""). See: https://bitbucket.org/Coin3D/coin/issues/66/soasciitext-fails-with-empty-default 
+        obj.addProperty("App::PropertyLink","DF","GDT","Text").DF=None   #TEST: Maybe this way the Annotation object is properly initialized
+        FreeCAD.Console.PrintMessage('Inicializado objeto tipo '+str(getType(obj))+'\n')
+        
+
 
     def onChanged(self,obj,prop):
+        FreeCAD.Console.PrintMessage('49B\n')
         if hasattr(obj,"spBool"):
             obj.setEditorMode('spBool',2)
         if hasattr(obj,"diameter"):
@@ -1073,13 +1222,19 @@ class _Annotation(_GDTObject):
 
     def execute(self, fp):
         '''"Print a short message when doing a recomputation, this method is mandatory" '''
+        FreeCAD.Console.PrintMessage('49C\n')
         # FreeCAD.Console.PrintMessage('Executed\n')
-        auxP1 = fp.p1
+        FreeCAD.Console.PrintMessage('Línea donde falla: '+fp.Type+' '+str(fp.PropertiesList)+'\n')
+        FreeCAD.Console.PrintMessage(str(len(fp.faces))+' caras tiene\n')
+        #auxP1 = fp.faces[0].Shape.getElement(fp.faces[1][0]).CenterOfMass         
+        auxP1 = fp.p1 
         if fp.circumferenceBool:
+            FreeCAD.Console.PrintMessage('fp.circumferenceBool=true\n')
             vertexex = fp.faces[0][0].Shape.getElement(fp.faces[0][1]).Vertexes
             fp.p1 = vertexex[0].Point if vertexex[0].Point.z > vertexex[1].Point.z else vertexex[1].Point
             fp.Direction = fp.AP.Direction
         else:
+            FreeCAD.Console.PrintMessage('fp.circumferenceBool=false\n')
             fp.p1 = (fp.faces[0][0].Shape.getElement(fp.faces[0][1]).CenterOfMass).projectToPlane(fp.AP.PointWithOffset, fp.AP.Direction)
             fp.Direction = fp.faces[0][0].Shape.getElement(fp.faces[0][1]).normalAt(0,0)
         diff = fp.p1-auxP1
@@ -1088,7 +1243,9 @@ class _Annotation(_GDTObject):
 
 class _ViewProviderAnnotation(_ViewProviderGDT):
     "A View Provider for the GDT Annotation object"
+    FreeCAD.Console.PrintMessage('50\n')
     def __init__(self, obj):
+        FreeCAD.Console.PrintMessage('50A\n')
         obj.addProperty("App::PropertyFloat","LineWidth","GDT","Line width").LineWidth = getLineWidth()
         obj.addProperty("App::PropertyColor","LineColor","GDT","Line color").LineColor = getRGBLine()
         obj.addProperty("App::PropertyFloat","LineScale","GDT","Line scale").LineScale = getParam("lineScale",1.0)
@@ -1101,6 +1258,7 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
 
     def attach(self, obj):
         "called on object creation"
+        FreeCAD.Console.PrintMessage('50B\n')
         from pivy import coin
         self.node = coin.SoGroup()
         self.node3d = coin.SoGroup()
@@ -1120,9 +1278,11 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
         self.font = coin.SoFont()
         self.font3d = coin.SoFont()
         self.textDF = coin.SoAsciiText()
+        # hack
+       	#self.textDF = coin.SoText2()
         self.textDF3d = coin.SoText2()
-        self.textDF.string = "" # some versions of coin crash if string is not set
-        self.textDF3d.string = ""
+        self.textDF.string=" " # some versions of coin crash if string is not set. Empty string ("") is not valid. Before, it was self.textDF.string = ""
+        self.textDF3d.string=" "
         self.textDFpos = coin.SoTransform()
         self.textDF.justification = self.textDF3d.justification = coin.SoAsciiText.CENTER
         labelDF = coin.SoSeparator()
@@ -1146,9 +1306,11 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
         self.textureTransform = []
         for i in range(20):
             self.textGT.append(coin.SoAsciiText())
+            #hack
+            #self.textGT.append(coin.SoText2())
             self.textGT3d.append(coin.SoText2())
-            self.textGT[i].string = ""
-            self.textGT3d[i].string = ""
+            self.textGT[i].string =" "      #Replaced "" with " " 
+            self.textGT3d[i].string =" "
             self.textGTpos.append(coin.SoTransform())
             self.textGT[i].justification = self.textGT3d[i].justification = coin.SoAsciiText.CENTER
             labelGT = coin.SoSeparator()
@@ -1203,8 +1365,9 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
 
     def updateData(self, fp, prop):
         "If a property of the handled feature has changed we have the chance to handle this here"
+        FreeCAD.Console.PrintMessage('50C\n')
         # fp is the handled feature, prop is the name of the property that has changed
-        FreeCAD.Console.PrintMessage('Entra en updateData de ViewProviderAnnotation con propiedad: '+prop+'\n')
+        FreeCAD.Console.PrintMessage('Entra en updateData de ViewProviderAnnotation con propiedad: '+str(prop)+'\n')
         if prop in "selectedPoint" and hasattr(fp.ViewObject,"Decimals") and hasattr(fp.ViewObject,"ShowUnit") and fp.spBool:
             FreeCAD.Console.PrintMessage('updateData entra en if1\n')
             points, segments = getPointsToPlot(fp)
@@ -1226,6 +1389,7 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
         FreeCAD.Console.PrintMessage('SALE de updateData de ViewProviderAnnotation con propiedad: '+prop+'\n')
 
     def doubleClicked(self,obj):
+        FreeCAD.Console.PrintMessage('50D\n')
         try:
             select(self.Object)
         except:
@@ -1233,6 +1397,7 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
 
     def getDisplayModes(self,obj):
         "Return a list of display modes."
+        FreeCAD.Console.PrintMessage('50E\n')
         modes=[]
         modes.append("2D")
         modes.append("3D")
@@ -1240,13 +1405,16 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
 
     def getDefaultDisplayMode(self):
         "Return the name of the default display mode. It must be defined in getDisplayModes."
+        FreeCAD.Console.PrintMessage('50F\n')
         return "2D"
 
     def setDisplayMode(self,mode):
+        FreeCAD.Console.PrintMessage('50G\n')
         return mode
 
     def onChanged(self, vobj, prop):
         "Here we can do something when a single property got changed"
+        FreeCAD.Console.PrintMessage('50H\n')
         FreeCAD.Console.PrintMessage('onChanged self: '+str(self)+' objeto:'+str(vobj)+' propiedad '+str(prop)+'\n')
         return  
         if (prop == "LineColor") and hasattr(vobj,"LineColor"):
@@ -1278,45 +1446,60 @@ class _ViewProviderAnnotation(_ViewProviderGDT):
             self.updateData(vobj.Object, "selectedPoint")
 
     def getIcon(self):
+        FreeCAD.Console.PrintMessage('50I\n')
         return(":/dd/icons/annotation.svg")
 
 def makeAnnotation(faces, AP, DF=None, GT=[], modify=False, Object=None, diameter = 0.0, toleranceSelect = True, toleranceDiameter = 0.0, lowLimit = 0.0, highLimit = 0.0):
     ''' Explanation
     '''
+    FreeCAD.Console.PrintMessage('60\n')
     if not modify:
+        FreeCAD.Console.PrintMessage('60A\n')
+        FreeCAD.Console.PrintMessage('60A dictionaryAnnotation[len(getAllAnnotationObjects())] : '+dictionaryAnnotation[len(getAllAnnotationObjects())]+'\n')
         obj = FreeCAD.ActiveDocument.addObject("App::DocumentObjectGroupPython",dictionaryAnnotation[len(getAllAnnotationObjects())])
         _Annotation(obj)
+        FreeCAD.Console.PrintMessage('Tras _Annotattion. Ha añadido el DF misterioso? : '+str(getAllAnnotationObjects()[0].faces)+'\n')
+        FreeCAD.Console.PrintMessage('Efectivamente, el objeto es de tipo: '+getType(obj)+'\n')
         if gui:
+            FreeCAD.Console.PrintMessage('60B\n')
             _ViewProviderAnnotation(obj.ViewObject)
         group = FreeCAD.ActiveDocument.getObject("GDT")
         group.addObject(obj)
         obj.faces = faces
         obj.AP = AP
         if obj.circumferenceBool:
+            FreeCAD.Console.PrintMessage('60C\n')
             vertexex = obj.faces[0][0].Shape.getElement(obj.faces[0][1]).Vertexes
             index = [l.Point.z for l in vertexex].index(max([l.Point.z for l in vertexex]))
             obj.p1 = vertexex[index].Point
             obj.Direction = obj.AP.Direction
         else:
+            FreeCAD.Console.PrintMessage('60D\n')
             obj.p1 = (obj.faces[0][0].Shape.getElement(obj.faces[0][1]).CenterOfMass).projectToPlane(obj.AP.PointWithOffset, obj.AP.Direction)
             obj.Direction = obj.faces[0][0].Shape.getElement(obj.faces[0][1]).normalAt(0,0)
     else:
+        FreeCAD.Console.PrintMessage('60E\n')
         obj = Object
+    FreeCAD.Console.PrintMessage('60F\n')
     obj.DF = DF
+    FreeCAD.Console.PrintMessage('60F DF.Label: '+DF.Label+'\n')
     obj.GT = GT
     obj.diameter = diameter
     obj.toleranceSelectBool = toleranceSelect
     if toleranceSelect:
+        FreeCAD.Console.PrintMessage('60G\n')
         obj.toleranceDiameter = toleranceDiameter
         obj.lowLimit = 0.0
         obj.highLimit = 0.0
     else:
+        FreeCAD.Console.PrintMessage('60H\n')
         obj.toleranceDiameter = 0.0
         obj.lowLimit = lowLimit
         obj.highLimit = highLimit
 
     def getPoint(point):
         if point:
+            FreeCAD.Console.PrintMessage('60I\n')
             obj.spBool = True
             obj.selectedPoint = point
             hideGrid()
@@ -1328,10 +1511,13 @@ def makeAnnotation(faces, AP, DF=None, GT=[], modify=False, Object=None, diamete
             return obj
         else:
             if DF:
+                FreeCAD.Console.PrintMessage('60J\n')
                 FreeCAD.ActiveDocument.removeObject(obj.DF.Name)
                 if checkBoxState:
+                    FreeCAD.Console.PrintMessage('60K\n')
                     FreeCAD.ActiveDocument.removeObject(getAllDatumSystemObjects()[-1].Name)
             else:
+                FreeCAD.Console.PrintMessage('60L\n')
                 FreeCAD.ActiveDocument.removeObject(obj.GT[-1].Name)
             FreeCAD.ActiveDocument.removeObject(obj.Name)
             hideGrid()
@@ -1340,8 +1526,10 @@ def makeAnnotation(faces, AP, DF=None, GT=[], modify=False, Object=None, diamete
             FreeCAD.ActiveDocument.recompute()
             return None
     if not obj.spBool:
+        FreeCAD.Console.PrintMessage('60M\n')
         return FreeCADGui.Snapper.getPoint(callback=getPoint)
     else:
+        FreeCAD.Console.PrintMessage('60N\n')
         hideGrid()
         select(obj)
         for l in getAllAnnotationObjects():
@@ -1354,12 +1542,15 @@ def makeAnnotation(faces, AP, DF=None, GT=[], modify=False, Object=None, diamete
     #-----------------------------------------------------------------------
 
 class Characteristics(object):
+    FreeCAD.Console.PrintMessage('61\n')
     def __init__(self, Label, Icon):
+        FreeCAD.Console.PrintMessage('61A\n')
         self.Label = Label
         self.Icon = Icon
         self.Proxy = self
 
 def makeCharacteristics(label=None):
+    FreeCAD.Console.PrintMessage('62\n')
     Label = ['Straightness', 'Flatness', 'Circularity', 'Cylindricity', 'Profile of a line', 'Profile of a surface', 'Perpendicularity', 'Angularity', 'Parallelism', 'Symmetry', 'Position', 'Concentricity','Circular run-out', 'Total run-out']
     Icon = [':/dd/icons/Characteristic/straightness.svg', ':/dd/icons/Characteristic/flatness.svg', ':/dd/icons/Characteristic/circularity.svg', ':/dd/icons/Characteristic/cylindricity.svg', ':/dd/icons/Characteristic/profileOfALine.svg', ':/dd/icons/Characteristic/profileOfASurface.svg', ':/dd/icons/Characteristic/perpendicularity.svg', ':/dd/icons/Characteristic/angularity.svg', ':/dd/icons/Characteristic/parallelism.svg', ':/dd/icons/Characteristic/symmetry.svg', ':/dd/icons/Characteristic/position.svg', ':/dd/icons/Characteristic/concentricity.svg',':/dd/icons/Characteristic/circularRunOut.svg', ':/dd/icons/Characteristic/totalRunOut.svg']
     if label == None:
@@ -1372,13 +1563,16 @@ def makeCharacteristics(label=None):
         return characteristics
 
 class FeatureControlFrame(object):
+    FreeCAD.Console.PrintMessage('63\n')
     def __init__(self, Label, Icon, toolTip):
+        FreeCAD.Console.PrintMessage('63A\n')
         self.Label = Label
         self.Icon = Icon
         self.toolTip = toolTip
         self.Proxy = self
 
 def makeFeatureControlFrame(toolTip=None):
+    FreeCAD.Console.PrintMessage('64\n')
     Label = ['','','','','','','','']
     Icon = ['', ':/dd/icons/FeatureControlFrame/freeState.svg', ':/dd/icons/FeatureControlFrame/leastMaterialCondition.svg', ':/dd/icons/FeatureControlFrame/maximumMaterialCondition.svg', ':/dd/icons/FeatureControlFrame/projectedToleranceZone.svg', ':/dd/icons/FeatureControlFrame/regardlessOfFeatureSize.svg', ':/dd/icons/FeatureControlFrame/tangentPlane.svg', ':/dd/icons/FeatureControlFrame/unequalBilateral.svg']
     ToolTip = ['Feature control frame', 'Free state', 'Least material condition', 'Maximum material condition', 'Projected tolerance zone', 'Regardless of feature size', 'Tangent plane', 'Unequal Bilateral']
@@ -1396,7 +1590,9 @@ def makeFeatureControlFrame(toolTip=None):
         return featureControlFrame
 
 class ContainerOfData(object):
+    FreeCAD.Console.PrintMessage('65\n')
     def __init__(self, faces = []):
+        FreeCAD.Console.PrintMessage('65A\n')
         self.faces = faces
         self.diameter = 0.0
         if self.faces <> []:
@@ -1433,11 +1629,14 @@ class ContainerOfData(object):
 #---------------------------------------------------------------------------
 
 class GDTWidget:
+    FreeCAD.Console.PrintMessage('66\n')
     def __init__(self):
+        FreeCAD.Console.PrintMessage('66A\n')
         self.dialogWidgets = []
         self.ContainerOfData = None
 
     def activate( self, idGDT=0, dialogTitle='GD&T Widget', dialogIconPath=':/dd/icons/GDT.svg', endFunction=None, dictionary=None):
+        FreeCAD.Console.PrintMessage('66B\n')
         self.dialogTitle=dialogTitle
         self.dialogIconPath = dialogIconPath
         self.endFunction = endFunction
@@ -1450,30 +1649,38 @@ class GDTWidget:
         else:
             extraWidgets.append(textLabelWidget(Text='Name:',Mask='NNNn'))
         self.taskDialog = GDTDialog( self.dialogTitle, self.dialogIconPath, self.idGDT, extraWidgets + self.dialogWidgets, self.ContainerOfData)
+        FreeCAD.Console.PrintMessage('DIALOGO************ '+str(self.taskDialog.initArgs)+'\n')
         FreeCADGui.Control.showDialog( self.taskDialog )
 
 class GDTDialog:
+    FreeCAD.Console.PrintMessage('67\n')
     def __init__(self, title, iconPath, idGDT, dialogWidgets, ContainerOfData):
+        FreeCAD.Console.PrintMessage('67A\n')
         self.initArgs = title, iconPath, idGDT, dialogWidgets, ContainerOfData
         self.createForm()
 
     def createForm(self):
+        FreeCAD.Console.PrintMessage('67B\n')
         title, iconPath, idGDT, dialogWidgets, ContainerOfData = self.initArgs
         self.form = GDTGuiClass( title, idGDT, dialogWidgets, ContainerOfData)
         self.form.setWindowTitle( title )
         self.form.setWindowIcon( QtGui.QIcon( iconPath ) )
 
     def reject(self): #close button
+        FreeCAD.Console.PrintMessage('67C\n')
+        FreeCAD.Console.PrintMessage('Funcion reject de GTDDialog\n')
         hideGrid()
         FreeCAD.ActiveDocument.recompute()
         FreeCADGui.Control.closeDialog()
 
     def getStandardButtons(self): #http://forum.freecadweb.org/viewtopic.php?f=10&t=11801
+        FreeCAD.Console.PrintMessage('67D\n')
         return 0x00200000 #close button
 
 class GDTGuiClass(QtGui.QWidget):
-
+    FreeCAD.Console.PrintMessage('68\n')
     def __init__(self, title, idGDT, dialogWidgets, ContainerOfData):
+        FreeCAD.Console.PrintMessage('68A\n')
         super(GDTGuiClass, self).__init__()
         self.dd_dialogWidgets = dialogWidgets
         self.title = title
@@ -1482,6 +1689,7 @@ class GDTGuiClass(QtGui.QWidget):
         self.initUI( self.title , self.idGDT, self.ContainerOfData)
 
     def initUI(self, title, idGDT, ContainerOfData):
+        FreeCAD.Console.PrintMessage('68B\n')
         self.idGDT = idGDT
         self.ContainerOfData = ContainerOfData
         vbox = QtGui.QVBoxLayout()
@@ -1502,16 +1710,22 @@ class GDTGuiClass(QtGui.QWidget):
         vbox.addLayout( hbox )
         self.setLayout(vbox)
 
+
     def createObject(self):
+        FreeCAD.Console.PrintMessage('68C\n')
         global auxDictionaryDS
         self.textName = self.ContainerOfData.textName.encode('utf-8')
         if self.idGDT == 1:
-            FreeCAD.Console.PrintMessage('Voy a crear un objeto DatumFeature\n')
+            FreeCAD.Console.PrintMessage('Voy a crear un objeto DatumFeature con nombre: '+self.textName+'\n')
             obj = makeDatumFeature(self.textName, self.ContainerOfData)
             FreeCAD.Console.PrintMessage('Creado objeto DatumFeature\n')
+            FreeCAD.Console.PrintMessage('Objeto DatumFeature: '+str(obj.Type)+' Label: '+str(obj.Label)+'\n')
+            #FreeCAD.Console.PrintMessage('Objeto DatumFeature: '+obj+'\n')
             if checkBoxState:
                 FreeCAD.Console.PrintMessage('makeDatumSystem llamada1\n')
+                FreeCAD.Console.PrintMessage('auxDictionaryDS[len(getAllDatumSystemObjects())]='+auxDictionaryDS[len(getAllDatumSystemObjects())]+' nombre: '+self.textName+'\n')
                 makeDatumSystem(auxDictionaryDS[len(getAllDatumSystemObjects())] + ': ' + self.textName, obj, None, None)
+                FreeCAD.Console.PrintMessage('Termina makeDatumSystem\n')
         elif self.idGDT == 2:
             separator = ' | '
             if self.ContainerOfData.textDS[0] <> '':
@@ -1541,6 +1755,7 @@ class GDTGuiClass(QtGui.QWidget):
         FreeCAD.Console.PrintMessage('cierraDialogo\n')
 
 def GDTDialog_hbox( label, inputWidget):
+    FreeCAD.Console.PrintMessage('69\n')
     hbox = QtGui.QHBoxLayout()
     hbox.addWidget( QtGui.QLabel(label) )
     if inputWidget <> None:
@@ -1549,12 +1764,15 @@ def GDTDialog_hbox( label, inputWidget):
     return hbox
 
 class textLabelWidget:
+    FreeCAD.Console.PrintMessage('70\n')
     def __init__(self, Text='Label', Mask=None, Dictionary=None):
+        FreeCAD.Console.PrintMessage('70A\n')
         self.Text = Text
         self.Mask = Mask
         self.Dictionary = Dictionary
 
     def generateWidget( self, idGDT, ContainerOfData ):
+        FreeCAD.Console.PrintMessage('70B\n')
         self.idGDT = idGDT
         self.ContainerOfData = ContainerOfData
         self.lineEdit = QtGui.QLineEdit()
@@ -1574,13 +1792,14 @@ class textLabelWidget:
         return GDTDialog_hbox(self.Text,self.lineEdit)
 
     def valueChanged(self, argGDT):
+        FreeCAD.Console.PrintMessage('70C\n')
         self.text = argGDT.strip()
         self.ContainerOfData.textName = self.text
 
     def getNumberOfObjects(self):
         "getNumberOfObjects(): returns the number of objects of the same type as the active widget"
+        FreeCAD.Console.PrintMessage('70D\n')
         if self.idGDT == 1:
-            FreeCAD.Console.PrintMessage('GetnumberOfObjects, getAllDatumFeatureObjects')
             NumberOfObjects = len(getAllDatumFeatureObjects())
         elif self.idGDT == 2:
             NumberOfObjects = len(getAllDatumSystemObjects())
@@ -1593,10 +1812,13 @@ class textLabelWidget:
         return NumberOfObjects
 
 class fieldLabelWidget:
+    FreeCAD.Console.PrintMessage('71\n')
     def __init__(self, Text='Label'):
+        FreeCAD.Console.PrintMessage('71A\n')
         self.Text = Text
 
     def generateWidget( self, idGDT, ContainerOfData ):
+        FreeCAD.Console.PrintMessage('71B\n')
         self.idGDT = idGDT
         self.ContainerOfData = ContainerOfData
         if hasattr(FreeCADGui,"Snapper"):
@@ -1613,6 +1835,7 @@ class fieldLabelWidget:
         return GDTDialog_hbox(self.Text,self.inputfield)
 
     def valueChanged(self, d):
+        FreeCAD.Console.PrintMessage('71C\n')
         self.ContainerOfData.OffsetValue = d
         if hasattr(FreeCADGui,"Snapper"):
             if FreeCADGui.Snapper.grid:
@@ -1620,13 +1843,16 @@ class fieldLabelWidget:
                 FreeCADGui.Snapper.grid.set()
 
 class comboLabelWidget:
+    FreeCAD.Console.PrintMessage('72\n')
     def __init__(self, Text='Label', List=None, Icons=None, ToolTip = None):
+        FreeCAD.Console.PrintMessage('72A\n')
         self.Text = Text
         self.List = List
         self.Icons = Icons
         self.ToolTip = ToolTip
 
     def generateWidget( self, idGDT, ContainerOfData ):
+        FreeCAD.Console.PrintMessage('72B\n')
         self.idGDT = idGDT
         self.ContainerOfData = ContainerOfData
 
@@ -1665,6 +1891,7 @@ class comboLabelWidget:
         return GDTDialog_hbox(self.Text,self.ContainerOfData.combo[self.k])
 
     def updateDate(self, comboIndex):
+        FreeCAD.Console.PrintMessage('72C\n')
         if self.ToolTip <> None:
             self.ContainerOfData.combo[self.k].setToolTip( self.ToolTip[comboIndex] )
         if self.Text == 'Primary:':
@@ -1711,6 +1938,7 @@ class comboLabelWidget:
                     FreeCADGui.Snapper.grid.set()
 
     def updateItemsEnabled(self, comboIndex):
+        FreeCAD.Console.PrintMessage('72D\n')
         comboIndex0 = comboIndex
         comboIndex1 = (comboIndex+1) % 3
         comboIndex2 = (comboIndex+2) % 3
@@ -1735,11 +1963,14 @@ class comboLabelWidget:
             self.ContainerOfData.combo[comboIndex2].model().item(self.ContainerOfData.combo[comboIndex1].currentIndex()).setEnabled(False)
 
 class groupBoxWidget:
+    FreeCAD.Console.PrintMessage('73\n')
     def __init__(self, Text='Label', List=[]):
+        FreeCAD.Console.PrintMessage('73A\n')
         self.Text = Text
         self.List = List
 
     def generateWidget( self, idGDT, ContainerOfData ):
+        FreeCAD.Console.PrintMessage('73B\n')
         self.idGDT = idGDT
         self.ContainerOfData = ContainerOfData
         self.group = QtGui.QGroupBox(self.Text)
@@ -1750,7 +1981,9 @@ class groupBoxWidget:
         return self.group
 
 class fieldLabeCombolWidget:
+    FreeCAD.Console.PrintMessage('74\n')
     def __init__(self, Text='Label', Circumference = [''], Diameter = 0.0, toleranceSelect = True, tolerance = 0.0, lowLimit = 0.0, highLimit = 0.0, List=[''], Icons=None, ToolTip = None):
+        FreeCAD.Console.PrintMessage('74A\n')
         self.Text = Text
         self.Circumference = Circumference
         self.Diameter = Diameter
@@ -1763,6 +1996,7 @@ class fieldLabeCombolWidget:
         self.ToolTip = ToolTip
 
     def generateWidget( self, idGDT, ContainerOfData ):
+        FreeCAD.Console.PrintMessage('74B\n')
         self.idGDT = idGDT
         self.ContainerOfData = ContainerOfData
         self.DECIMALS = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Units").GetInt("Decimals",2)
@@ -1857,6 +2091,7 @@ class fieldLabeCombolWidget:
         return vbox
 
     def updateDate(self):
+        FreeCAD.Console.PrintMessage('74C\n')
         if self.ToolTip <> None:
             self.combo.setToolTip( self.ToolTip[self.combo.currentIndex()] )
         if self.Text == 'Tolerance value:':
@@ -1866,6 +2101,7 @@ class fieldLabeCombolWidget:
                 self.ContainerOfData.featureControlFrame = makeFeatureControlFrame('')
 
     def updateDateCircumference(self):
+        FreeCAD.Console.PrintMessage('74D\n')
         if self.comboCircumference.currentIndex() <> 0:
             self.ContainerOfData.circumference = True
             self.label.show()
@@ -1898,6 +2134,7 @@ class fieldLabeCombolWidget:
                 self.inputfieldHigh.hide()
 
     def updateDateTolerance(self):
+        FreeCAD.Console.PrintMessage('74E\n')
         if self.comboTolerance.currentIndex() <> 0:
             self.ContainerOfData.toleranceSelect = False
             self.labelTolerance.hide()
@@ -1916,25 +2153,33 @@ class fieldLabeCombolWidget:
             self.inputfieldHigh.hide()
 
     def valueChanged(self,d):
+        FreeCAD.Console.PrintMessage('74F\n')
         self.ContainerOfData.toleranceValue = d
 
     def valueChangedDiameter(self,d):
+        FreeCAD.Console.PrintMessage('74G\n')
         self.ContainerOfData.diameter = d
 
     def valueChangedTolerance(self,d):
+        FreeCAD.Console.PrintMessage('74H\n')
         self.ContainerOfData.toleranceDiameter = d
 
     def valueChangedLow(self,d):
+        FreeCAD.Console.PrintMessage('74I\n')
         self.ContainerOfData.lowLimit = d
 
     def valueChangedHigh(self,d):
+        FreeCAD.Console.PrintMessage('74J\n')
         self.ContainerOfData.highLimit = d
 
 class CheckBoxWidget:
+    FreeCAD.Console.PrintMessage('75\n')
     def __init__(self, Text='Label'):
+        FreeCAD.Console.PrintMessage('75A\n')
         self.Text = Text
 
     def generateWidget( self, idGDT, ContainerOfData ):
+        FreeCAD.Console.PrintMessage('75B\n')
         self.idGDT = idGDT
         self.ContainerOfData = ContainerOfData
         self.checkBox = QtGui.QCheckBox(self.Text)
@@ -1948,6 +2193,7 @@ class CheckBoxWidget:
         return hbox
 
     def updateState(self):
+        FreeCAD.Console.PrintMessage('75C\n')
         global checkBoxState
         if self.checkBox.isChecked():
             checkBoxState = True
