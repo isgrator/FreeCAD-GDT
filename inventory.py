@@ -50,6 +50,7 @@ class GDTGuiClass:
         self.widgetsGDT = []
         inventory = getAllAnnotationPlaneObjects() + getAllDatumSystemObjects() + getAllDatumFeatureObjects() + getAllGeometricToleranceObjects()
         for obj in inventory:
+            FreeCAD.Console.PrintMessage('Objeto:'+str(obj.Label)+' Propiedades: '+str(obj.PropertiesList)+'\n')
             self.widget = QtGui.QWidget()
             self.widget.setWindowTitle( obj.Label )
             self.widget.setWindowIcon( obj.ViewObject.Icon )
