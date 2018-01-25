@@ -39,18 +39,21 @@ class GeometricDimensioningAndTolerancingWorkbench ( Workbench ):
 			import geometricTolerance
 			import annotationPlane
 			import inventory
+                        import exportToXML
 		except ImportError:
 			FreeCAD.Console.PrintWarning("Error: Initializing one or more of the GD&T modules failed, GD&T will not work as expected.\n")
 
 		self.cmdList = ['dd_datumFeature','dd_datumSystem','dd_geometricTolerance','dd_annotationPlane']
 		self.inventory = ['dd_inventory']
-		self.appendToolbar("GD&T Tools",self.cmdList+self.inventory)
- 		self.appendMenu("GD&T Tools",self.cmdList+self.inventory)
+                self.exportToXML = ['dd_exportToXML']
+		self.appendToolbar("GD&T Tools",self.cmdList+self.inventory+self.exportToXML)
+ 		self.appendMenu("GD&T Tools",self.cmdList+self.inventory+self.exportToXML)
 
 		FreeCADGui.addIconPath(':/dd/icons')
 		FreeCADGui.addPreferencePage( ':/dd/ui/preferences-gdt.ui','GDT' )
 
 		Log ("Loading Geometric Dimensioning & Tolerancing... done\n")
+
 
 	def Activated(self):
                 # do something here if needed...
@@ -75,5 +78,6 @@ class GeometricDimensioningAndTolerancingWorkbench ( Workbench ):
 		if showCmdList:
 			self.appendContextMenu("",self.cmdList) # add commands to the context menu
 		self.appendContextMenu("",self.inventory)
+		self.appendContextMenu("",self.exportToXML)
 
 FreeCADGui.addWorkbench(GeometricDimensioningAndTolerancingWorkbench)
